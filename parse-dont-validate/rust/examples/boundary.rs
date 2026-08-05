@@ -8,11 +8,19 @@
 use parse_dont_validate::domain::Deploy;
 
 fn main() {
-    let json = r#"{"service":"checkout-api","environment":"production","replicas":0}"#;
+    let json = r#"{
+    "service": "checkout-api",
+    "environment": "production",
+    "replicas": 0
+}"#;
     let err = serde_json::from_str::<Deploy>(json).unwrap_err();
     println!("rejected at the boundary -> {err}");
 
-    let json = r#"{"service":"  CHECKOUT-API  ","environment":"Production","replicas":4}"#;
+    let json = r#"{
+    "service": "  CHECKOUT-API  ",
+    "environment": "Production",
+    "replicas": 4
+}"#;
     let parsed = serde_json::from_str::<Deploy>(json).unwrap();
     println!(
         "parsed and canonicalised -> {}/{} x{}",

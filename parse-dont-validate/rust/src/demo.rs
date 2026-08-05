@@ -33,7 +33,8 @@ fn section(label: &str, outcome: &str, world: &World) -> String {
 pub fn run() -> String {
     // Checks interleaved with effects: rejected, but state already changed.
     let mut world = World::default();
-    let outcome = match deploy_shotgun(&mut world, &zero_replica_request()) {
+    let req = zero_replica_request();
+    let outcome = match deploy_shotgun(&mut world, &req) {
         Ok(()) => "accepted".to_owned(),
         Err(e) => format!("rejected with {e:?}"),
     };

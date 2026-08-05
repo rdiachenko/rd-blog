@@ -30,9 +30,15 @@ impl fmt::Display for ParseError {
                 write!(f, "service must be 3-30 chars of [a-z0-9-]")
             }
             Self::UnknownEnvironment => {
-                write!(f, "environment must be one of {}", ENVIRONMENTS.join(", "))
+                write!(
+                    f,
+                    "environment must be one of {}",
+                    ENVIRONMENTS.join(", ")
+                )
             }
-            Self::ZeroReplicas => write!(f, "replicas must be at least 1"),
+            Self::ZeroReplicas => {
+                write!(f, "replicas must be at least 1")
+            }
         }
     }
 }
@@ -45,9 +51,9 @@ impl ServiceName {
         let canonical = raw.trim().to_ascii_lowercase();
 
         let len_ok = (3..=30).contains(&canonical.len());
-        let chars_ok = canonical
-            .chars()
-            .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-');
+        let chars_ok = canonical.chars().all(|c| {
+            c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-'
+        });
 
         if len_ok && chars_ok {
             Ok(Self(canonical))
@@ -164,15 +170,27 @@ mod tests {
 
     #[test]
     fn serde_routes_through_try_from() {
-        let json = r#"{"service":"checkout-api","environment":"production","replicas":0}"#;
+        let json = r#"{
+    "service": "checkout-api",
+    "environment": "production",
+    "replicas": 0
+}"#;
         let err = serde_json::from_str::<Deploy>(json).unwrap_err();
         assert!(err.to_string().contains("replicas must be at least 1"));
     }
 
     #[test]
     fn canonicalisation_happens_once_at_the_boundary() {
-        let a = r#"{"service":"CHECKOUT-API","environment":"production","replicas":2}"#;
-        let b = r#"{"service":"  checkout-api ","environment":"Production","replicas":2}"#;
+        let a = r#"{
+    "service": "CHECKOUT-API",
+    "environment": "production",
+    "replicas": 2
+}"#;
+        let b = r#"{
+    "service": "  checkout-api ",
+    "environment": "Production",
+    "replicas": 2
+}"#;
         assert_eq!(
             serde_json::from_str::<Deploy>(a).unwrap(),
             serde_json::from_str::<Deploy>(b).unwrap()

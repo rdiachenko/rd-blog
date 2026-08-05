@@ -14,26 +14,30 @@ pub struct World {
 
 /// Each check is correct in isolation. The problem is the ordering: two writes
 /// land before the third check runs.
-pub fn deploy_shotgun(world: &mut World, req: &DeployRequest) -> Result<(), DeployError> {
+pub fn deploy_shotgun(
+    world: &mut World,
+    req: &DeployRequest,
+) -> Result<(), DeployError> {
     if !is_service_name(&req.service) {
         return Err(DeployError::BadServiceName);
     }
-    world.deployments.push(req.service.clone()); // effect 1
+    // effect 1
+    world.deployments.push(req.service.clone());
 
     if !is_environment(&req.environment) {
         return Err(DeployError::UnknownEnvironment);
     }
-    world
-        .traffic
-        .push(format!("{} -> {}", req.environment, req.service)); // effect 2
+    // effect 2
+    let route = format!("{} -> {}", req.environment, req.service);
+    world.traffic.push(route);
 
     if req.replicas == 0 {
-        return Err(DeployError::ZeroReplicas); // too late
+        // too late
+        return Err(DeployError::ZeroReplicas);
     }
 
-    world
-        .audit
-        .push(format!("deployed {} to {}", req.service, req.environment));
+    let entry = format!("deployed {} to {}", req.service, req.environment);
+    world.audit.push(entry);
     Ok(())
 }
 

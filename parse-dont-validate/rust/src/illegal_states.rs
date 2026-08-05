@@ -26,8 +26,12 @@ impl Deployment {
             Deployment::RollingOut { started_at_ms } => {
                 format!("rolling out since {started_at_ms}")
             }
-            Deployment::Live { since_ms } => format!("live since {since_ms}"),
-            Deployment::RolledBack { reason } => format!("rolled back: {reason}"),
+            Deployment::Live { since_ms } => {
+                format!("live since {since_ms}")
+            }
+            Deployment::RolledBack { reason } => {
+                format!("rolled back: {reason}")
+            }
         }
     }
 }

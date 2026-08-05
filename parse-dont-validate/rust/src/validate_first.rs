@@ -14,9 +14,15 @@ pub enum DeployError {
 impl std::fmt::Display for DeployError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::BadServiceName => write!(f, "service must be 3-30 chars of [a-z0-9-]"),
-            Self::UnknownEnvironment => write!(f, "environment is not one of the known ones"),
-            Self::ZeroReplicas => write!(f, "replicas must be at least 1"),
+            Self::BadServiceName => {
+                write!(f, "service must be 3-30 chars of [a-z0-9-]")
+            }
+            Self::UnknownEnvironment => {
+                write!(f, "environment is not one of the known ones")
+            }
+            Self::ZeroReplicas => {
+                write!(f, "replicas must be at least 1")
+            }
         }
     }
 }
@@ -70,7 +76,11 @@ pub fn memory_per_replica_mb(req: &DeployRequest, total_mb: u32) -> u32 {
 mod tests {
     use super::*;
 
-    fn req(service: &str, environment: &str, replicas: u32) -> DeployRequest {
+    fn req(
+        service: &str,
+        environment: &str,
+        replicas: u32,
+    ) -> DeployRequest {
         DeployRequest {
             service: service.to_string(),
             environment: environment.to_string(),
