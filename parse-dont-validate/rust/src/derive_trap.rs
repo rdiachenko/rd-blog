@@ -15,10 +15,10 @@ pub mod trap {
             if raw == 0 {
                 return Err("replicas must be at least 1");
             }
-            Ok(Replicas(raw))
+            Ok(Self(raw))
         }
 
-        pub fn count(&self) -> u32 {
+        pub fn get(&self) -> u32 {
             self.0
         }
     }
@@ -34,10 +34,10 @@ impl Replicas {
         if raw == 0 {
             return Err("replicas must be at least 1");
         }
-        Ok(Replicas(raw))
+        Ok(Self(raw))
     }
 
-    pub fn count(&self) -> u32 {
+    pub fn get(&self) -> u32 {
         self.0
     }
 }
@@ -46,7 +46,7 @@ impl TryFrom<u32> for Replicas {
     type Error = &'static str;
 
     fn try_from(raw: u32) -> Result<Self, Self::Error> {
-        Replicas::new(raw)
+        Self::new(raw)
     }
 }
 
@@ -60,7 +60,23 @@ mod tests {
 
         // ...and yet deserialisation accepts zero.
         let smuggled: trap::Replicas = serde_json::from_str("0").unwrap();
-        assert_eq!(smuggled.count(), 0);
+        assert_eq!(smuggled.get(), 0);
+    }
+
+    /// The hole exists only because the inner type is `u32`. Pushing the rule
+    /// into the inner type closes it without any serde attribute at all.
+    #[test]
+    fn a_nonzero_inner_type_has_no_hole() {
+        use std::num::NonZeroU32;
+
+        #[derive(Debug, Deserialize)]
+        struct Replicas(NonZeroU32);
+
+        let err = serde_json::from_str::<Replicas>("0").unwrap_err();
+        assert!(err.to_string().contains("nonzero"));
+
+        let ok: Replicas = serde_json::from_str("3").unwrap();
+        assert_eq!(ok.0.get(), 3);
     }
 
     #[test]
@@ -69,6 +85,6 @@ mod tests {
         assert!(err.to_string().contains("replicas must be at least 1"));
 
         let ok: Replicas = serde_json::from_str("3").unwrap();
-        assert_eq!(ok.count(), 3);
+        assert_eq!(ok.get(), 3);
     }
 }
