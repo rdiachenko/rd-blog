@@ -3,7 +3,7 @@
 
 use crate::domain::Deploy;
 use crate::request::DeployRequest;
-use crate::validate_first::{is_environment, is_service_name, DeployError};
+use crate::validate_first::{DeployError, is_environment, is_service_name};
 
 #[derive(Debug, Default)]
 pub struct World {

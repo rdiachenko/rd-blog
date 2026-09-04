@@ -5,13 +5,13 @@
 
 mod cluster_initialization;
 
+pub use crate::cluster_initialization::CentroidInitStrategy;
+use crate::cluster_initialization::CentroidInitStrategy::*;
 use crate::cluster_initialization::bradley_fayyad;
 use crate::cluster_initialization::forgy;
 use crate::cluster_initialization::kmeanspp;
 use crate::cluster_initialization::macqueen;
 use crate::cluster_initialization::maximin;
-pub use crate::cluster_initialization::CentroidInitStrategy;
-use crate::cluster_initialization::CentroidInitStrategy::*;
 
 /// Maximum number of iterations for the k-means algorithm
 const MAX_ITERATIONS: usize = 100;

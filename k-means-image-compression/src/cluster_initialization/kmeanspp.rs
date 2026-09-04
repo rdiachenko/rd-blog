@@ -4,8 +4,8 @@
 //! combined with a greedy approach for improved quality of the chosen centroids.
 
 use crate::squared_euclidean_dist;
-use rand::distributions::Uniform;
 use rand::Rng;
+use rand::distributions::Uniform;
 
 /// Initialize centroids using the k-means++ method with a greedy approach.
 ///

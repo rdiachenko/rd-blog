@@ -7,7 +7,7 @@
 
 use crate::domain::Deploy;
 use crate::request::DeployRequest;
-use crate::shotgun::{deploy, deploy_shotgun, World};
+use crate::shotgun::{World, deploy, deploy_shotgun};
 
 fn zero_replica_request() -> DeployRequest {
     DeployRequest {

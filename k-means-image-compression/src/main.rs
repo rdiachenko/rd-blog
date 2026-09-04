@@ -102,7 +102,7 @@ fn parse_strategy(s: &str) -> Option<CentroidInitStrategy> {
 fn transform(image: &DynamicImage) -> Vec<Vec<f64>> {
     image
         .pixels()
-        .map(|pixel| pixel.2 .0)
+        .map(|pixel| pixel.2.0)
         .map(|rgba| {
             let mut rgb = Vec::new();
             for val in rgba.iter().take(3) {
