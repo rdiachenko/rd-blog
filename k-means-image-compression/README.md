@@ -39,14 +39,14 @@ You need to have Rust installed on your system. You can get it from [rust-lang.o
 Clone the repository:
 
 ```bash
-git clone https://github.com/rdiachenko/ml-lab.git
-cd ml-lab
+git clone https://github.com/rdiachenko/rd-blog.git
+cd rd-blog/k-means-image-compression
 ```
 
 Build the project:
 
 ```bash
-cargo build --package k_means --release
+cargo build --release
 ```
 
 ## Usage
@@ -54,7 +54,7 @@ cargo build --package k_means --release
 To compress an image using k-means clustering:
 
 ```bash
-cargo run --package k_means --release -- IMAGE K STRATEGY
+cargo run --release -- IMAGE K STRATEGY
 ```
 
 Where:
@@ -71,7 +71,7 @@ Where:
 Example:
 
 ```bash
-cargo run --package k_means --release -- /path/to/sky.png 16 k
+cargo run --release -- /path/to/sky.png 16 k
 ```
 
 This command will compress the image `sky.png` to use 16 colors, using the K-means++ initialization strategy.
@@ -95,7 +95,7 @@ Comparison of k-means initialization strategies for image compression (16 Colors
 To generate and view the documentation for this project:
 
 ```bash
-cargo doc --package k_means --no-deps --document-private-items --open
+cargo doc --no-deps --document-private-items --open
 ```
 
 This will build the documentation and open it in your default web browser.

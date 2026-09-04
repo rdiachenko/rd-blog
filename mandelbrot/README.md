@@ -10,9 +10,7 @@ Step-by-Step Guide: [Exploring Zig Programming Language with The Mandelbrot Set]
 
 Build, test and run:
 
-```shell
-cd zig-mandelbrot
-
+```bash
 zig build -Doptimize=ReleaseFast \
     test \
     run --summary all \

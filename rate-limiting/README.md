@@ -1,4 +1,4 @@
-[![ci](https://github.com/rdiachenko/rate-limiting/actions/workflows/ci.yml/badge.svg)](https://github.com/rdiachenko/rate-limiting/actions/workflows/ci.yml)
+[![Java](https://github.com/rdiachenko/rd-blog/actions/workflows/java.yml/badge.svg)](https://github.com/rdiachenko/rd-blog/actions/workflows/java.yml)
 
 # Rate Limiting
 
@@ -9,8 +9,6 @@ This repository contains Java implementations of various rate limiting algorithm
 - [Sliding Window Rate Limiting](#sliding-window-rate-limiting)
 - [Token Bucket Rate Limiting](#token-bucket-rate-limiting)
 - [Leaky Bucket Rate Limiting](#leaky-bucket-rate-limiting)
-- [Adaptive Rate Limiting](#adaptive-rate-limiting)
-- [Distributed Rate Limiting](#distributed-rate-limiting)
 
 ## Fixed Window Rate Limiting
 
@@ -71,10 +69,3 @@ As shown in the flow diagram below, each incoming request triggers an attempt to
 
 ![Flow Diagram for Leaky Bucket Algorithm](docs/leaky-bucket-algorithm-flow-diagram.png "Flow Diagram for Leaky Bucket Algorithm")
 
-## Adaptive Rate Limiting
-
-WIP
-
-## Distributed Rate Limiting
-
-WIP
