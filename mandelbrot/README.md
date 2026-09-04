@@ -1,12 +1,8 @@
 # Mandelbrot
 
-Exploring various programming languages by building and plotting the Mandelbrot set.
+The Mandelbrot set in Zig, the companion code for [Exploring Zig by Building and Plotting the Mandelbrot Set](https://rdiachenko.com/posts/zig/exploring-ziglang-with-mandelbrot-set/).
 
 ![Mandelbrot Set](docs/mandelbrot-set.png "Mandelbrot Set Visualization")
-
-## Zig
-
-Step-by-Step Guide: [Exploring Zig Programming Language with The Mandelbrot Set](https://www.rdiachenko.com/posts/zig/exploring-ziglang-with-mandelbrot-set/).
 
 Needs the Zig version named in `build.zig.zon` (`minimum_zig_version`). Zigimg is fetched by the package manager on the first build.
 
