@@ -1,5 +1,3 @@
-[![Java](https://github.com/rdiachenko/rd-blog/actions/workflows/java.yml/badge.svg)](https://github.com/rdiachenko/rd-blog/actions/workflows/java.yml)
-
 # Rate limiting
 
 Java implementations of four rate limiting algorithms, the companion code for the [Rate Limiting](https://rdiachenko.com/series/rate-limiting/) series. Each limiter is one class with one method, `allowed(userId)`, which returns whether the request may go through. Every constructor takes a `Clock`, so the tests move time by hand instead of sleeping.
