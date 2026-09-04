@@ -6,7 +6,7 @@ Code and artifacts behind the posts on [rdiachenko.com](https://rdiachenko.com) 
 |---|---|---|
 | [`rate-limiting`](rate-limiting/) | [Rate Limiting series](https://rdiachenko.com/series/rate-limiting/) | Java 21, Gradle |
 | [`k-means-image-compression`](k-means-image-compression/) | [K-Means Image Compression in Rust](https://rdiachenko.com/posts/ml/k-means-image-compression/) | Rust |
-| [`mandelbrot`](mandelbrot/) | [Exploring Zig by Building and Plotting the Mandelbrot Set](https://rdiachenko.com/posts/zig/exploring-ziglang-with-mandelbrot-set/) | Zig 0.12 |
+| [`mandelbrot`](mandelbrot/) | [Exploring Zig by Building and Plotting the Mandelbrot Set](https://rdiachenko.com/posts/zig/exploring-ziglang-with-mandelbrot-set/) | Zig 0.16 |
 | [`parse-dont-validate`](parse-dont-validate/) | [Parse, Don't Validate, in Rust](https://rdiachenko.com/posts/rust/parse-dont-validate/) | Rust, Java 21 |
 | [`tail-calls`](tail-calls/) | Recursion in Rust Is a Bet on the Optimiser (draft) | Rust nightly |
 

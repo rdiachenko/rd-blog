@@ -6,13 +6,11 @@ on:
     branches: [main]
     paths:
       - 'mandelbrot/**'
-      - '.gitmodules'
       - '.github/workflows/zig.yml'
   pull_request:
     branches: [main]
     paths:
       - 'mandelbrot/**'
-      - '.gitmodules'
       - '.github/workflows/zig.yml'
 
 jobs:
@@ -23,10 +21,11 @@ jobs:
         working-directory: mandelbrot
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: true
+      - name: Read Zig version from build.zig.zon
+        id: zig
+        run: echo "version=$(sed -nE 's/.*minimum_zig_version = "([^"]+)".*/\1/p' build.zig.zon)" >> "$GITHUB_OUTPUT"
       - uses: mlugg/setup-zig@v2
         with:
-          version: 0.12.0
+          version: ${{ steps.zig.outputs.version }}
       - run: zig build test --summary all
       - run: zig build -Doptimize=ReleaseFast

@@ -1,3 +1,0 @@
-[submodule "mandelbrot/zigimg"]
-	path = mandelbrot/zigimg
-	url = https://github.com/zigimg/zigimg.git

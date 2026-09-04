@@ -19,8 +19,9 @@ replay_pid*
 *.jar
 !**/gradle/wrapper/gradle-wrapper.jar
 
-# Zig
+# Zig (zig-pkg/ holds dependencies unpacked by the package manager)
 .zig-cache/
 zig-cache/
 zig-out/
+zig-pkg/
 /mandelbrot/*.png

@@ -11,10 +11,9 @@ const zigimg = @import("zigimg");
 /// 
 /// Example Usage:
 /// `./mandelbrot mandelbrot.png 1000x750 -1.20,0.35 -1,0.20`
-pub fn main() !void {
-    const allocator = std.heap.page_allocator;
-    const args = try std.process.argsAlloc(allocator);
-    defer std.process.argsFree(allocator, args);
+pub fn main(init: std.process.Init) !void {
+    const allocator = init.gpa;
+    const args = try init.minimal.args.toSlice(init.arena.allocator());
 
     if (args.len != 5) {
         std.log.err("Usage: {s} [IMAGE_FILE] [IMAGE_RESOLUTION] [MANDELBROT_TOP_LEFT] [MANDELBROT_BOTTOM_RIGHT]\nExample: {s} mandelbrot.png 1000x750 -1.20,0.35 -1,0.20", .{ args[0], args[0] });
@@ -63,7 +62,7 @@ pub fn main() !void {
     }
 
     // Write the processed image data to the file specified in the arguments.
-    try writeImage(args[1], pixels, imgSize);
+    try writeImage(init.io, allocator, args[1], pixels, imgSize);
 }
 
 /// Attempts to parse a string `str` as a value pair, such as "200x400" or "-2.0,0.5".
@@ -72,7 +71,7 @@ pub fn main() !void {
 fn parseArg(comptime T: type, str: []const u8, separator: u8) ?[2]T {
     if (str.len == 0) return null;
 
-    const index = std.mem.indexOfScalar(u8, str, separator);
+    const index = std.mem.findScalar(u8, str, separator);
     if (index) |i| {
         const leftStr = str[0..i];
         const rightStr = str[i + 1 ..];
@@ -243,32 +242,18 @@ fn render(pixels: []u8, imgSize: [2]usize, pointTopLeft: Complex(f64), pointBott
 
 /// Writes the buffer `pixels`, whose dimensions are given by `imgSize`, to the
 /// file named `filename` in PNG format.
-fn writeImage(filename: []const u8, pixels: []const u8, imgSize: [2]usize) !void {
-    const width = imgSize[0];
-    const height = imgSize[1];
-    const allocator = std.heap.page_allocator;
-
-    // Initialize an image object with given pixel data and configuration.
+fn writeImage(io: std.Io, allocator: std.mem.Allocator, filename: []const u8, pixels: []const u8, imgSize: [2]usize) !void {
+    // Copy the grayscale bytes into an image object that knows their width, height and pixel format.
     // This step might fail, hence the use of 'try', which will propagate the error if it occurs.
-    const pixelStorage = try zigimg.color.PixelStorage.init(allocator, zigimg.PixelFormat.grayscale8, width * height);
-
-    for (pixels, 0..) |pixel, index| {
-        pixelStorage.grayscale8[index] = zigimg.color.Grayscale8{ .value = pixel };
-    }
-
-    var image = zigimg.Image{
-        .allocator = allocator,
-        .width = width,
-        .height = height,
-        .pixels = pixelStorage,
-    };
+    var image = try zigimg.Image.fromRawPixels(allocator, imgSize[0], imgSize[1], pixels, .grayscale8);
 
     // Ensure the image is deinitialized when the function exits to free resources.
-    defer image.deinit();
+    defer image.deinit(allocator);
+
+    // The PNG encoder writes through this buffer. zigimg's default size is enough.
+    var writeBuffer: [zigimg.io.DEFAULT_BUFFER_SIZE]u8 = undefined;
 
     // Write the image data to a file with the specified filename and default PNG encoder options.
     // If writing fails, the error will be propagated upwards due to `try`.
-    try image.writeToFilePath(filename, zigimg.Image.EncoderOptions{
-        .png = .{},
-    });
+    try image.writeToFilePath(allocator, io, filename, &writeBuffer, .{ .png = .{} });
 }
