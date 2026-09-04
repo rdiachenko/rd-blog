@@ -1,0 +1,56 @@
+name: Rust
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'k-means-image-compression/**'
+      - 'parse-dont-validate/rust/**'
+      - 'tail-calls/**'
+      - '.github/workflows/rust.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'k-means-image-compression/**'
+      - 'parse-dont-validate/rust/**'
+      - 'tail-calls/**'
+      - '.github/workflows/rust.yml'
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  k-means-image-compression:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: k-means-image-compression
+    steps:
+      - uses: actions/checkout@v4
+      - run: rustup update stable && rustup default stable && rustup component add rustfmt
+      - run: cargo build --verbose
+      - run: cargo test --verbose
+      - run: cargo fmt --all --check
+
+  parse-dont-validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: parse-dont-validate/rust
+    steps:
+      - uses: actions/checkout@v4
+      - run: rustup update stable && rustup default stable && rustup component add rustfmt
+      - run: cargo test --verbose
+      - run: cargo fmt --all --check
+
+  tail-calls:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tail-calls
+    steps:
+      - uses: actions/checkout@v4
+      - run: rustup update stable && rustup default stable
+      - run: rustup toolchain install nightly --profile minimal
+      - run: ./run.sh

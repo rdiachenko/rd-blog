@@ -1,6 +1,0 @@
-rust/target/
-java/target/
-
-# The repo-wide *.lock rule (for Hugo) would otherwise swallow this. A binary
-# crate should pin its dependencies so the tests are reproducible.
-!rust/Cargo.lock

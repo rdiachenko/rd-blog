@@ -1,0 +1,45 @@
+name: Java
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'rate-limiting/**'
+      - 'parse-dont-validate/java/**'
+      - '.github/workflows/java.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'rate-limiting/**'
+      - 'parse-dont-validate/java/**'
+      - '.github/workflows/java.yml'
+
+jobs:
+  rate-limiting:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: rate-limiting
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+      - run: ./gradlew build --no-daemon
+
+  parse-dont-validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: parse-dont-validate/java
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - run: mvn -B test
