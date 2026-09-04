@@ -1,13 +1,15 @@
-# Parse, don't validate: runnable code
+# Parse, don't validate
 
 Companion code for [Parse, Don't Validate, in Rust](https://rdiachenko.com/posts/rust/parse-dont-validate/).
 Every snippet in the post is assembled here so it actually compiles and runs.
+
+Needs Rust 1.85 or later (edition 2024) for the Rust side, and Java 21 with Maven for the Java side.
 
 ## Rust
 
 ```bash
 cd rust
-cargo test    # 15 tests: every claim in the post as an assertion
+cargo test    # 19 tests: every claim in the post as an assertion
 cargo run     # reproduces the shotgun-parsing output from the post
 ```
 

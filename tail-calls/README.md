@@ -1,4 +1,4 @@
-# Tail calls: runnable code
+# Tail calls
 
 Companion code for "Recursion in Rust Is a Bet on the Optimiser". Every
 experiment in the post is one file here, and `run.sh` reproduces every table and
@@ -9,7 +9,7 @@ rustup toolchain install nightly   # `become` is nightly-only
 ./run.sh
 ```
 
-The whole run takes about a minute. Most of it is building the same 15-line
+The whole run takes under a minute. Most of it is building the same 15-line
 program at four optimisation levels.
 
 | File | Post section | Shows |
