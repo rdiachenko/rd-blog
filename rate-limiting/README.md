@@ -13,7 +13,7 @@ This repository contains Java implementations of various rate limiting algorithm
 ## Fixed Window Rate Limiting
 
 Implementations:
-- Basic: [`FixedWindowRateLimiter`](lib/src/main/java/com/rdiachenko/ratelimiting/FixedWindowRateLimiter.java).
+- Basic: [`FixedWindowRateLimiter`](src/main/java/com/rdiachenko/ratelimiting/FixedWindowRateLimiter.java).
 - Thread safe: WIP.
 
 The [Fixed Window Rate Limiting](https://www.rdiachenko.com/posts/arch/rate-limiting/fixed-window-algorithm/) algorithm is initialized with two key properties:
@@ -27,8 +27,8 @@ As illustrated in the flow diagram below, a request is successfully processed if
 ## Sliding Window Rate Limiting
 
 Implementations:
-- Basic: [`SlidingWindowLogRateLimiter`](lib/src/main/java/com/rdiachenko/ratelimiting/SlidingWindowLogRateLimiter.java).
-- Memory-optimized: [`SlidingWindowCountRateLimiter`](lib/src/main/java/com/rdiachenko/ratelimiting/SlidingWindowCountRateLimiter.java).
+- Basic: [`SlidingWindowLogRateLimiter`](src/main/java/com/rdiachenko/ratelimiting/SlidingWindowLogRateLimiter.java).
+- Memory-optimized: [`SlidingWindowCountRateLimiter`](src/main/java/com/rdiachenko/ratelimiting/SlidingWindowCountRateLimiter.java).
 - Thread safe: WIP.
 
 The [Sliding Window Rate Limiting](https://www.rdiachenko.com/posts/arch/rate-limiting/sliding-window-algorithm/) algorithm is initialized with two key properties:
@@ -42,7 +42,7 @@ As shown in the flow diagram below, a new sliding window is created once for eac
 ## Token Bucket Rate Limiting
 
 Implementations:
-- Basic: [`TokenBucketRateLimiter`](lib/src/main/java/com/rdiachenko/ratelimiting/TokenBucketRateLimiter.java).
+- Basic: [`TokenBucketRateLimiter`](src/main/java/com/rdiachenko/ratelimiting/TokenBucketRateLimiter.java).
 - Thread safe: WIP.
 
 The [Token Bucket Rate Limiting](https://www.rdiachenko.com/posts/arch/rate-limiting/token-bucket-algorithm/) algorithm is initialized with the following key properties:
@@ -57,7 +57,7 @@ As shown in the flow diagram below, an attempt to refill the token bucket is mad
 ## Leaky Bucket Rate Limiting
 
 Implementations:
-- Basic: [`LeakyBucketRateLimiter`](lib/src/main/java/com/rdiachenko/ratelimiting/LeakyBucketRateLimiter.java).
+- Basic: [`LeakyBucketRateLimiter`](src/main/java/com/rdiachenko/ratelimiting/LeakyBucketRateLimiter.java).
 - Thread safe: WIP.
 
 The [Leaky Bucket Rate Limiting](https://www.rdiachenko.com/posts/arch/rate-limiting/leaky-bucket-algorithm/) algorithm is initialized with the following key properties:

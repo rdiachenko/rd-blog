@@ -4,4 +4,3 @@ plugins {
 }
 
 rootProject.name = 'rate-limiting'
-include('lib')
