@@ -23,9 +23,16 @@ embeds them in the README with a `<picture>` element.
 ## Render the example
 
 ```bash
-python3 skills/readme-diagram/scripts/build_scene.py example/blog.json example/blog.excalidraw
-excalidraw render example/blog.excalidraw --theme light --scale 2 --out example/blog-light.png
-excalidraw render example/blog.excalidraw --theme dark --scale 2 --out example/blog-dark.png
+python3 skills/readme-diagram/scripts/build_scene.py \
+  example/blog.json \
+  example/blog.excalidraw
+
+for t in light dark; do
+  excalidraw render example/blog.excalidraw \
+    --theme $t \
+    --scale 2 \
+    --out example/blog-$t.png
+done
 ```
 
 The build prints the PNG size to expect and nothing else: the example has no layout warnings.
