@@ -113,6 +113,13 @@ for t in light dark; do
 done
 ```
 
+`--scale 2` suits a README: GitHub shows the image at half its pixel width, so it stays sharp on
+high-density screens. `render` caps output at 2048px wide by default (`--max-width`), which the
+1800px limit keeps you under. For anything other than a README, such as a blog figure, render for
+the widest the image is shown at, doubled (`--scale 3 --max-width 4096` for a 1200px column), and
+check what the destination's `width` means: some site generators resize the image to it, and
+passing the display width there blurs the picture.
+
 Then open both PNGs with the Read tool and look at them as the README reader would. Check:
 - every label is readable and sits on its own arrow, clear of other lines;
 - no arrow passes through a box or crosses another arrow where it could be avoided;
