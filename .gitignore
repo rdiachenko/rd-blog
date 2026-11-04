@@ -25,3 +25,9 @@ zig-cache/
 zig-out/
 zig-pkg/
 /mandelbrot/*.png
+
+# Python
+__pycache__/
+
+# Rendered Excalidraw example
+/excalidraw-readme-diagrams/example/*.png

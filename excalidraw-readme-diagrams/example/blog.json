@@ -1,0 +1,18 @@
+{
+  "font": "hand",
+  "grid": {"col": 330, "row": 220},
+  "nodes": [
+    {"id": "you", "label": "You", "kind": "person", "col": 0.5, "row": 0},
+    {"id": "repo", "label": "Blog repo", "note": "Markdown posts", "kind": "store", "col": 0, "row": 1},
+    {"id": "actions", "label": "GitHub Actions", "note": "deploy-site.yml", "kind": "trigger", "col": 1, "row": 1},
+    {"id": "pages", "label": "GitHub Pages", "kind": "system", "col": 1, "row": 2},
+    {"id": "readers", "label": "Readers", "kind": "person", "col": 2.05, "row": 2}
+  ],
+  "edges": [
+    {"from": "you", "to": "repo", "label": "writes, pushes", "wrap": 8},
+    {"from": "you", "to": "actions", "label": "runs the deploy", "wrap": 8},
+    {"from": "actions", "to": "repo", "label": "checks out", "wrap": 6},
+    {"from": "actions", "to": "pages", "label": "builds with Hugo, publishes"},
+    {"from": "readers", "to": "pages", "label": "read posts", "wrap": 5}
+  ]
+}
