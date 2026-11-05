@@ -1,8 +1,9 @@
 # Excalidraw README diagrams
 
-Companion code for "Hand-Drawn README Diagrams with the Excalidraw CLI". It holds the
-`readme-diagram` Claude Code skill from the post, the script it runs, and the spec behind the
-post's figure.
+Companion code for
+[Hand-Drawn README Diagrams with the Excalidraw CLI](https://rdiachenko.com/til/claude-code/excalidraw-readme-diagrams/).
+It holds the `readme-diagram` Claude Code skill from the post, the script it runs, and the spec
+behind the post's figure.
 
 Needs Python 3.10 or later for the script, and the
 [Excalidraw CLI](https://github.com/excalidraw/cli) (Node.js 22 or later, plus Chrome, Chromium,

@@ -11,4 +11,4 @@ Code and artifacts behind the posts on [rdiachenko.com](https://rdiachenko.com) 
 | [`mandelbrot`](mandelbrot/) | [Exploring Zig by Building and Plotting the Mandelbrot Set](https://rdiachenko.com/posts/zig/exploring-ziglang-with-mandelbrot-set/) | Zig 0.16 |
 | [`parse-dont-validate`](parse-dont-validate/) | [Parse, Don't Validate, in Rust](https://rdiachenko.com/posts/rust/parse-dont-validate/) | Rust, Java 21 |
 | [`tail-calls`](tail-calls/) | Recursion in Rust Is a Bet on the Optimiser (draft) | Rust nightly |
-| [`excalidraw-readme-diagrams`](excalidraw-readme-diagrams/) | Hand-Drawn README Diagrams with the Excalidraw CLI (draft) | Python 3.10+, Claude Code skill |
+| [`excalidraw-readme-diagrams`](excalidraw-readme-diagrams/) | [Hand-Drawn README Diagrams with the Excalidraw CLI](https://rdiachenko.com/til/claude-code/excalidraw-readme-diagrams/) | Python 3.10+, Claude Code skill |
