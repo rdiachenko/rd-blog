@@ -46,7 +46,7 @@ looks like.
 | `skills/readme-diagram/scripts/build_scene.py` | Spec to `.excalidraw`, with layout warnings and `--check` |
 | `example/blog.json` | The spec behind the post's figure |
 | `example/blog.excalidraw` | The scene it builds, which also opens on excalidraw.com |
-| `tests/test_build_scene.py` | Determinism, the warnings, ellipse clipping, `--check` |
+| `tests/test_build_scene.py` | Determinism, the warnings, ellipse and diamond clipping, the column report, `--check` |
 
 ```bash
 python3 -m unittest discover -s tests
@@ -62,3 +62,10 @@ skill asks before overwriting those edits.
 
 The warnings use estimated text widths, so a clean build doesn't prove a clean picture. That is
 why the skill renders and looks at both PNGs before it finishes.
+
+## Figures for a post
+
+The skill also draws figures for blog posts and docs pages. 2 spec fields exist for them. A
+`decision` node draws a flowchart question as a diamond. `"column": 700` tells the build the page
+shrinks the figure into a 700px text column, so it reports the text size and height the reader
+sees and warns when text drops under 15px or the figure shows taller than wide.

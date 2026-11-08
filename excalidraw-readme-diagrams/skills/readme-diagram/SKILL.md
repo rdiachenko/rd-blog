@@ -1,6 +1,6 @@
 ---
 name: readme-diagram
-description: Turn a project's text diagram (usually the context diagram in docs/architecture.md) into a hand-drawn Excalidraw picture for the README, rendered locally to light and dark PNGs with the official Excalidraw CLI and embedded with a <picture> tag so GitHub shows the one matching the reader's theme. Use when the user asks for a README diagram, an overview or architecture picture for users, a PNG of the architecture, an Excalidraw version of a diagram, or to refresh the README diagram after the architecture changed. Not for diagrams inside architecture or design docs, which stay as text for agents to read and edit.
+description: Turn a project's text diagram (usually the context diagram in docs/architecture.md) into a hand-drawn Excalidraw picture for the README, rendered locally to light and dark PNGs with the official Excalidraw CLI and embedded with a <picture> tag so GitHub shows the one matching the reader's theme. Use when the user asks for a README diagram, an overview or architecture picture for users, a PNG of the architecture, an Excalidraw version of a diagram, or to refresh the README diagram after the architecture changed. Also use it for a hand-drawn figure in a blog post, TIL or docs page that explains a flow, a decision or how parts fit together. Not for diagrams inside architecture or design docs, which stay as text for agents to read and edit.
 ---
 
 # README diagram
@@ -9,6 +9,10 @@ A README is read by people who are deciding whether to use the project, so its d
 a picture, not box-drawing characters. The text diagrams in `docs/architecture.md` stay the source
 of truth: agents read and edit them, and this skill derives the picture from them. So the picture
 uses the same names as the doc, only simplified for a first-time reader.
+
+The same pipeline makes figures for a blog post, TIL or docs page. A figure differs in 2 ways,
+covered where they matter below: it shows the page's argument rather than the project, and the
+page shrinks it into a text column, so text size and height need checking.
 
 The pipeline is deterministic except for one step, the layout, which you check by looking:
 
@@ -48,6 +52,17 @@ reader who has never seen the project:
 Diagram for the reader, not for completeness: a missing detail costs nothing, a crowded picture
 costs the whole diagram.
 
+For a figure in a post, draw the flow the text explains, not the project's architecture:
+- Each box is a step the reader follows in the text, named in their words. Explain jargon in the
+  prose first and keep it out of box titles.
+- When the flow branches, make the branch point a `decision` node (a diamond) whose label is the
+  question ("Is v0 a release tag?"), and label its out-edges with the answers ("yes: 0.44 s",
+  "no (main): 22 s or more"). Conditions written on plain arrows ("release tag", "other refs")
+  read as statements, and readers miss that the flow branches.
+- Leave out a final box that every branch reaches when the edge labels already say the outcome.
+- Keep side notes out of the picture: a floating note reads as disconnected. Put its point in the
+  paragraph next to the figure.
+
 ## 3. Write the spec
 
 Save it as `docs/diagrams/<name>.json` (`overview` unless the user names it). Committed next to
@@ -73,12 +88,15 @@ the outputs, it lets the next run change one line instead of redrawing.
 Every field:
 - Top level: `font` is `hand` (Excalifont, the Excalidraw look; default), `normal` (Nunito) or
   `code`. `grid` sets the unit in pixels (default col 300, row 170). `fontSize` (box titles,
-  default 20) and `edgeFontSize` (arrow labels, boundary titles and notes, default 16).
+  default 20) and `edgeFontSize` (arrow labels, boundary titles and notes, default 16). `column`
+  is the width in pixels of the text column a page shrinks a figure to (about 700 for a typical
+  blog); set it for figures only, see step 4.
 - Nodes: `col`, `row` place the box centre in grid units; fractions and negatives are fine
   (`"row": -0.2` lifts one box to make room for the labels below it). `kind` is `person`
   (ellipse), `system` (the project, bold outline), `external`, `store` (repo, database, files),
-  `trigger` (scheduler, webhook) or `plain`. Colours come from Excalidraw's palette, which its
-  dark theme inverts cleanly, so don't set them by hand. `note` is a smaller grey line under the
+  `trigger` (scheduler, webhook), `decision` (a flowchart question, drawn as a diamond sized to
+  fit its text; keep it to a short question, split with `\n`) or `plain`. Colours come from
+  Excalidraw's palette, which its dark theme inverts cleanly, so don't set them by hand. `note` is a smaller grey line under the
   title; `\n` splits it, which keeps a wide note from widening its column. `w`, `h` override the
   size, which otherwise fits the text.
 - Boundaries: `label`, `nodes` (ids it surrounds), `padding` (default 40px).
@@ -105,6 +123,12 @@ spec and build again before rendering: building takes no time, rendering and loo
 warnings use estimated text widths, so a clean build is necessary, not sufficient. Keep build and
 render as separate commands, so a warning can't scroll past on its way to a render.
 
+With `column` set, the build skips the README width limit and reports how the figure reads once the
+page shrinks it, for example `in a 700px column: text about 16-21px, about 700x552px`. It warns when
+the smallest text drops under 15px, and when the figure shows taller than wide, which fills the
+screen on a large monitor. The defaults (20 and 16) end up around 12px in a 700px column; 28 and 24
+on a landscape layout about 950 units wide read comfortably.
+
 Render, only after a clean build:
 
 ```sh
@@ -115,10 +139,16 @@ done
 
 `--scale 2` suits a README: GitHub shows the image at half its pixel width, so it stays sharp on
 high-density screens. `render` caps output at 2048px wide by default (`--max-width`), which the
-1800px limit keeps you under. For anything other than a README, such as a blog figure, render for
-the widest the image is shown at, doubled (`--scale 3 --max-width 4096` for a 1200px column), and
-check what the destination's `width` means: some site generators resize the image to it, and
-passing the display width there blurs the picture.
+1800px limit keeps you under. For a figure, render for the widest the image is shown at, doubled,
+and raise the height cap too, since `render` also caps output at 2048px high (`--max-height`) and
+quietly lowers the scale of a tall figure to fit:
+
+```sh
+excalidraw render <name>.excalidraw --theme light --scale 3 --max-width 4096 --max-height 4096 --out <name>.png
+```
+
+Check what the destination's `width` means: Hugo's figure shortcodes often resize the image to it,
+so pass the PNG's own width there; passing the display width blurs the picture.
 
 Then open both PNGs with the Read tool and look at them as the README reader would. Check:
 - every label is readable and sits on its own arrow, clear of other lines;
@@ -145,8 +175,15 @@ Layout moves that work:
 - An arrow that would cross a box: add a `via` point beside the box.
 - Too wide: pull the outer columns in, split long notes with `\n`, reduce a boundary's padding,
   or move a box to a new row.
+- A long note (a full path, a command) widens its box and squeezes the arrows beside it. Keep
+  notes to a short line and move the detail into the text under the figure.
+- A figure that shows taller than wide: put consecutive boxes side by side (a 3-row Z shape fits
+  5 boxes), and drop boxes the labels already explain. Shrinking it instead makes the text small
+  again.
+- Short diagonal arrows in a figure: widen the grid's columns rather than its rows, which
+  lengthens them and keeps the figure landscape.
 
-## 5. Put it in the README
+## 5. Put it in the README or page
 
 Put it right after the paragraph that says what the project does, before any status note or the
 first `##` heading. Lead in with 1 short plain sentence saying what the picture shows ("How
@@ -163,6 +200,11 @@ linkcheck fits around your site:"), not a tour of the arrows, since the picture 
 Paths are relative to the README, so this works on GitHub and in a local markdown viewer. The alt
 text is for someone who can't see the image: 1 sentence of about 30 words at most that names the
 boxes and the main flow, not every arrow.
+
+For a figure in a page, put the PNG next to the page and keep the spec somewhere that isn't
+published: a Hugo page bundle publishes every file in it. Use the site's figure shortcode with a
+"Figure N." caption, and introduce the figure in the sentence before it with what it shows. The
+light render alone is fine when the site's figures don't switch with the theme.
 
 Replace an older diagram of the same thing rather than adding a second. Tell the user what you
 changed, which warnings you fixed, and what you left as it is. Don't commit unless they ask.

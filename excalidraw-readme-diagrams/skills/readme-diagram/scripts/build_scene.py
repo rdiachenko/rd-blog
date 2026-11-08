@@ -22,6 +22,7 @@ KINDS = {
     "store": ("#e8590c", "#ffec99"),
     "trigger": ("#2f9e44", "#b2f2bb"),
     "plain": ("#1e1e1e", "transparent"),
+    "decision": ("#1971c2", "#a5d8ff"),  # a flowchart question, drawn as a diamond
 }
 FONTS = {"hand": 5, "normal": 6, "code": 8}  # Excalifont, Nunito, Comic Shanns
 CHAR_W = {5: 0.56, 6: 0.55, 8: 0.6}  # average glyph width / font size, measured on renders
@@ -100,12 +101,15 @@ def wrap(label: str, width: int) -> str:
     return "\n".join("\n".join(textwrap.wrap(part, width) or [""]) for part in label.split("\n"))
 
 
-def clip(cx, cy, w, h, tx, ty, gap, ellipse=False):
+def clip(cx, cy, w, h, tx, ty, gap, shape="rectangle"):
     """The point where the ray from a box's centre towards (tx, ty) leaves the box, plus gap."""
     dx, dy = tx - cx, ty - cy
     if dx == 0 and dy == 0:
         return cx, cy
-    if ellipse:
+    if shape == "diamond":
+        s = 1 / (abs(dx) / (w / 2 + gap) + abs(dy) / (h / 2 + gap))
+        return cx + dx * s, cy + dy * s
+    if shape == "ellipse":
         a, b = w / 2 + gap, h / 2 + gap
         s = 1 / math.sqrt((dx / a) ** 2 + (dy / b) ** 2)
         return cx + dx * s, cy + dy * s
@@ -141,10 +145,14 @@ def build(spec: dict) -> dict:
         tw, th = text_size(n["label"], size, family)
         nw, nh = text_size(note, note_size, family) if note else (0, 0)
         gap = 6 if note else 0
-        w = n.get("w", max(160, tw + 48, nw + 48))
-        h = n.get("h", max(70, th + gap + nh + 36))
+        shape = {"person": "ellipse", "decision": "diamond"}.get(kind, "rectangle")
+        if shape == "diamond":  # text fits the inner rectangle when the diamond is twice its size
+            w = n.get("w", max(200, 2 * (max(tw, nw) + 24)))
+            h = n.get("h", max(120, 2 * (th + gap + nh + 16)))
+        else:
+            w = n.get("w", max(160, tw + 48, nw + 48))
+            h = n.get("h", max(70, th + gap + nh + 36))
         cx, cy = n["col"] * col_w, n["row"] * row_h
-        shape = "ellipse" if kind == "person" else "rectangle"
         box = base(
             nid,
             shape,
@@ -158,7 +166,7 @@ def build(spec: dict) -> dict:
             roundness={"type": 3} if shape == "rectangle" else {"type": 2},
             strokeWidth=3 if kind == "system" else 2,
         )
-        boxes[nid] = (cx, cy, w, h, box, shape == "ellipse")
+        boxes[nid] = (cx, cy, w, h, box, shape)
         if not note:  # bound text: stays centred when the box is edited on excalidraw.com
             txt = text_el(f"{nid}-text", n["label"], cx, cy, size, family, container=nid)
             box["boundElements"].append({"type": "text", "id": txt["id"]})
@@ -312,7 +320,7 @@ def layout_warnings(scene: dict) -> list[str]:
     boxes = [
         e
         for e in els.values()
-        if e["type"] in ("rectangle", "ellipse") and not e["id"].startswith("boundary-")
+        if e["type"] in ("rectangle", "ellipse", "diamond") and not e["id"].startswith("boundary-")
     ]
     labels = [
         e
@@ -402,6 +410,29 @@ def png_size(scene: dict, scale: int = 2, padding: int = 20) -> tuple[int, int]:
     )
 
 
+def column_report(scene: dict, spec: dict) -> tuple[str, list[str]]:
+    """How a figure reads when a page shrinks it into a text column of spec["column"] pixels."""
+    col = spec["column"]
+    w, h = png_size(scene, scale=1)
+    f = min(1, col / w)
+    size, edge = spec.get("fontSize", 20), spec.get("edgeFontSize", 16)
+    smallest = min(size * 0.75, edge) * f  # box notes are 0.75 of the title size
+    shown_w, shown_h = round(w * f), round(h * f)
+    summary = f"in a {col}px column: text about {smallest:.0f}-{size * f:.0f}px, about {shown_w}x{shown_h}px"
+    out = []
+    if smallest < 15:
+        out.append(
+            f"the smallest text shows at about {smallest:.0f}px in a {col}px column: raise fontSize "
+            "and edgeFontSize, or narrow the diagram (fewer columns, notes split with \\n)"
+        )
+    if shown_h > col:
+        out.append(
+            f"about {shown_w}x{shown_h}px in a {col}px column, taller than wide: put boxes side by "
+            "side to cut rows, or drop a box the edge labels already explain"
+        )
+    return summary, out
+
+
 def main() -> None:
     args = [a for a in sys.argv[1:] if a != "--check"]
     if len(args) != 2:
@@ -415,7 +446,13 @@ def main() -> None:
     for w in layout_warnings(scene):
         print(f"layout: {w}", file=sys.stderr)
     pw, ph = png_size(scene)
-    if pw > 1800:
+    summary = ""
+    if spec.get("column"):  # a figure a page shrinks to its text column; the README cap doesn't apply
+        summary, warnings = column_report(scene, spec)
+        for w in warnings:
+            print(f"layout: {w}", file=sys.stderr)
+        summary = f"; {summary}"
+    elif pw > 1800:
         print(
             f"layout: about {pw}px wide at --scale 2, over the README's 1800: "
             "move a box to a new row or pull the columns in",
@@ -432,7 +469,7 @@ def main() -> None:
         f.write(out)
     print(
         f"wrote {args[1]}: {len(spec['nodes'])} nodes, {len(spec.get('edges', []))} edges, "
-        f"about {pw}x{ph}px at --scale 2"
+        f"about {pw}x{ph}px at --scale 2{summary}"
     )
 
 

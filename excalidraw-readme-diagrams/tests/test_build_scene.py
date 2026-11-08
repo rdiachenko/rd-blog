@@ -88,6 +88,88 @@ class LayoutWarningTest(unittest.TestCase):
         self.assertTrue(math.isclose(value, 1, abs_tol=0.01), value)
 
 
+class DecisionTest(unittest.TestCase):
+    SPEC = {
+        "nodes": [
+            {"id": "q", "label": "Is v0 a\nrelease tag?", "kind": "decision", "col": 1, "row": 0},
+            {"id": "yes", "label": "Download", "col": 0, "row": 1.2},
+        ],
+        "edges": [{"from": "q", "to": "yes", "label": "yes"}],
+    }
+
+    def test_decision_is_a_diamond_that_fits_its_text(self):
+        els = {e["id"]: e for e in scene_for(self.SPEC)["elements"]}
+        q, text = els["q"], els["q-text"]
+        self.assertEqual(q["type"], "diamond")
+        # a centred box fits a diamond when its width and height shares sum to at most 1
+        fit = text["width"] / q["width"] + text["height"] / q["height"]
+        self.assertLessEqual(fit, 1, fit)
+
+    def test_arrow_from_a_diamond_starts_on_its_outline(self):
+        els = {e["id"]: e for e in scene_for(self.SPEC)["elements"]}
+        q, arrow = els["q"], els["edge-0-q-yes"]
+        cx, cy = q["x"] + q["width"] / 2, q["y"] + q["height"] / 2
+        a, b = q["width"] / 2 + 8, q["height"] / 2 + 8  # outline plus the binding gap
+        value = abs(arrow["x"] - cx) / a + abs(arrow["y"] - cy) / b
+        self.assertTrue(math.isclose(value, 1, abs_tol=0.01), value)
+
+
+class ColumnTest(unittest.TestCase):
+    """A figure a page shrinks into its text column: report text size and height."""
+
+    def test_wide_layout_with_large_text_passes(self):
+        spec = {
+            "nodes": [
+                {"id": "a", "label": "Your workflow", "note": "uses: owner/repo@v0",
+                 "col": 0, "row": 0},
+                {"id": "b", "label": "GitHub runner", "note": "copies the action",
+                 "col": 2, "row": 0},
+            ],
+            "edges": [{"from": "a", "to": "b", "label": "starts the job"}],
+            "column": 700, "fontSize": 28, "edgeFontSize": 24, "grid": {"col": 330, "row": 230},
+        }
+        summary, warnings = build_scene.column_report(scene_for(spec), spec)
+        self.assertEqual(warnings, [])
+        self.assertIn("in a 700px column", summary)
+
+    def test_small_text_is_reported(self):
+        spec = {
+            "nodes": [
+                {"id": f"n{i}", "label": "A rather long box title", "col": i * 2, "row": 0}
+                for i in range(3)
+            ],
+            "column": 700,
+        }
+        _, warnings = build_scene.column_report(scene_for(spec), spec)
+        self.assertTrue(any("smallest text" in w for w in warnings), warnings)
+
+    def test_tall_figure_is_reported(self):
+        spec = {
+            "nodes": [
+                {"id": f"n{i}", "label": f"Step {i}", "note": "a short note", "col": 0, "row": i}
+                for i in range(5)
+            ],
+            "edges": [{"from": f"n{i}", "to": f"n{i + 1}"} for i in range(4)],
+            "column": 700, "fontSize": 28, "edgeFontSize": 24, "grid": {"col": 300, "row": 200},
+        }
+        _, warnings = build_scene.column_report(scene_for(spec), spec)
+        self.assertTrue(any("taller than wide" in w for w in warnings), warnings)
+
+    def test_column_skips_the_readme_width_limit(self):
+        spec = {
+            "nodes": [{"id": f"n{i}", "label": f"Box {i}", "col": i, "row": 0} for i in range(8)],
+            "column": 700,
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            src = Path(tmp, "wide.json")
+            src.write_text(json.dumps(spec))
+            figure = run(str(src), str(Path(tmp, "wide.excalidraw")))
+            src.write_text(json.dumps({k: v for k, v in spec.items() if k != "column"}))
+            readme = run(str(src), str(Path(tmp, "wide.excalidraw")))
+        self.assertNotIn("over the README's 1800", figure.stderr)
+        self.assertIn("over the README's 1800", readme.stderr)
+
+
 class ErrorTest(unittest.TestCase):
     def test_unknown_kind_is_a_usage_error(self):
         with tempfile.TemporaryDirectory() as tmp:
