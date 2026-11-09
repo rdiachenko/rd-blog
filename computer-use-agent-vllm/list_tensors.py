@@ -20,4 +20,5 @@ for path in glob.glob(os.path.join(root, "*.safetensors")):
 
 for key, params in sizes.most_common():
     print(f"{params * 2 / 2**30:6.2f} GiB  {params:>13,}  {key}")
-print(f"{sum(sizes.values()) * 2 / 2**30:6.2f} GiB  {sum(sizes.values()):>13,}  total")
+total = sum(sizes.values())
+print(f"{total * 2 / 2**30:6.2f} GiB  {total:>13,}  total")
