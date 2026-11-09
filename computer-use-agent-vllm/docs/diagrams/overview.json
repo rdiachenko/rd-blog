@@ -1,0 +1,91 @@
+{
+  "font": "hand",
+  "grid": {
+    "col": 300,
+    "row": 200
+  },
+  "nodes": [
+    {
+      "id": "run",
+      "label": "Run",
+      "note": "1, 4, 6 or 8\nagents at once",
+      "kind": "trigger",
+      "col": 0,
+      "row": 0
+    },
+    {
+      "id": "shots",
+      "label": "shots/",
+      "note": "10 screenshots\n1000 tokens each",
+      "kind": "store",
+      "col": 1.45,
+      "row": 0
+    },
+    {
+      "id": "trace",
+      "label": "agent_trace.py",
+      "note": "10 steps\nper agent",
+      "kind": "system",
+      "col": 0,
+      "row": 1
+    },
+    {
+      "id": "vllm",
+      "label": "vLLM server",
+      "note": "Holo 3.1 4B\ncaching on or off",
+      "kind": "external",
+      "col": 1.45,
+      "row": 1
+    },
+    {
+      "id": "results",
+      "label": "results CSV",
+      "note": "per step: TTFT,\ndecode and\ncached tokens",
+      "kind": "store",
+      "col": 0,
+      "row": 2
+    },
+    {
+      "id": "gpu",
+      "label": "RTX 5070 Ti, 16 GB",
+      "note": "weights 8.71 GiB\nKV cache for\n78,444 tokens",
+      "kind": "store",
+      "col": 1.45,
+      "row": 2.15
+    }
+  ],
+  "edges": [
+    {
+      "from": "run",
+      "to": "trace",
+      "label": "starts"
+    },
+    {
+      "from": "trace",
+      "to": "shots",
+      "label": "reads"
+    },
+    {
+      "from": "trace",
+      "to": "vllm",
+      "label": "history",
+      "offset": -18
+    },
+    {
+      "from": "vllm",
+      "to": "trace",
+      "label": "64 tokens",
+      "offset": -18
+    },
+    {
+      "from": "trace",
+      "to": "results",
+      "label": "writes"
+    },
+    {
+      "from": "vllm",
+      "to": "gpu",
+      "label": "reuses cached\n576-token blocks"
+    }
+  ]
+}

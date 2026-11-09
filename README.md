@@ -12,3 +12,4 @@ Code and artifacts behind the posts on [rdiachenko.com](https://rdiachenko.com) 
 | [`parse-dont-validate`](parse-dont-validate/) | [Parse, Don't Validate, in Rust](https://rdiachenko.com/posts/rust/parse-dont-validate/) | Rust, Java 21 |
 | [`tail-calls`](tail-calls/) | Recursion in Rust Is a Bet on the Optimiser (draft) | Rust nightly |
 | [`excalidraw-readme-diagrams`](excalidraw-readme-diagrams/) | [Hand-Drawn README Diagrams with the Excalidraw CLI](https://rdiachenko.com/til/claude-code/excalidraw-readme-diagrams/) | Python 3.10+, Claude Code skill |
+| [`computer-use-agent-vllm`](computer-use-agent-vllm/) | [Serving a Computer-Use Agent on a 16 GB GPU with vLLM](https://rdiachenko.com/posts/inference/computer-use-agent-vllm/) | Python 3.14, vLLM 0.33 |

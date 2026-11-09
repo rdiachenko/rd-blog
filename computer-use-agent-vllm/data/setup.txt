@@ -1,0 +1,5 @@
+name, driver_version, memory.total [MiB]
+NVIDIA GeForce RTX 5070 Ti, 610.43.02, 16303 MiB
+python 3.14.4
+vllm 0.33.0
+torch 2.14.0+cu130 cuda 13.0

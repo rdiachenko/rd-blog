@@ -28,6 +28,10 @@ zig-pkg/
 
 # Python
 __pycache__/
+.venv/
+
+# vLLM server logs behind the computer-use agent post (*.log is ignored above)
+!/computer-use-agent-vllm/logs/*.log
 
 # Rendered Excalidraw example
 /excalidraw-readme-diagrams/example/*.png
