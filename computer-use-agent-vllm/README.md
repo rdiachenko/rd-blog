@@ -38,7 +38,7 @@ Several agents at once, caching on:
 | 8 | 57.2 s | 90 |
 
 Decode runs at 11.3 ms per token, 84% of the card's memory bandwidth. Past 4 agents the KV cache
-fills up, vLLM queues requests and evicts cached history, and total throughput falls.
+fills up, vLLM queues requests and reuses less cached history, and throughput falls.
 
 ## Run it
 

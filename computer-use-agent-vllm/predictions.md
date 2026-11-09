@@ -70,12 +70,12 @@ changed since. The "Measured" and "Gap and why" lines were added after each meas
   137 ms per token, total output 90 tokens per second against 166 with 4 agents. 6 agents: fine
   until step 9, collapse at step 10.
 - Gap and why:
-  - No failure: vLLM reserves its GPU memory at startup, so at run time it runs out of room in
-    the KV cache, not out of memory, and queues requests instead of crashing.
+  - No failure: vLLM kept the requests that didn't fit waiting until there was room, instead of
+    failing.
   - Earlier than predicted: the slowdown started at about 58,000 to 62,000 tokens of total
-    history, not 78,444. vLLM's counters show cached history being evicted (6-agent run: 46,080
-    expected cache hits missing, exactly 80 blocks of 576 tokens). The preemption counter stayed at
-    3 during that run, so eviction alone explains the missing hits.
+    history, not 78,444. In the 6-agent run, vLLM's counters show 46,080 fewer cache hits than expected,
+    the equivalent of 80 blocks of 576 tokens, and no preemptions. That points to cached history
+    being evicted between steps.
   - Still open: why the useful limit is 74 to 79% of the reported capacity. My guess is that the
     linear-attention layers, which share the GPU memory pool with the KV cache, need more of it
     than the 78,444 figure allows for, but I haven't checked it.
