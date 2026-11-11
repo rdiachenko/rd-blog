@@ -25,9 +25,9 @@ text diagram ──► docs/diagrams/<name>.json (spec you write)
 
 ## 1. Check the tools
 
-Run `excalidraw --version`. If it's missing: `npm i -g @excalidraw/cli` (needs Node 22+, and
-Chrome, Chromium, Edge or Firefox installed). Rendering local files needs no account or API key,
-so never run `excalidraw login` for this.
+Run `excalidraw --version`. If it's missing or older than 0.3.0: `npm i -g @excalidraw/cli`
+(needs Node 22+, and Chrome, Chromium, Edge or Firefox installed). Rendering local files needs no
+account or API key, so never run `excalidraw login` for this.
 
 ## 2. Decide what the picture shows
 
@@ -138,14 +138,15 @@ done
 ```
 
 `--scale 2` suits a README: GitHub shows the image at half its pixel width, so it stays sharp on
-high-density screens. `render` caps output at 2048px wide by default (`--max-width`), which the
-1800px limit keeps you under. For a figure, render for the widest the image is shown at, doubled,
-and raise the height cap too, since `render` also caps output at 2048px high (`--max-height`) and
-quietly lowers the scale of a tall figure to fit:
+high-density screens. For a figure, render for the widest the image is shown at, doubled:
 
 ```sh
-excalidraw render <name>.excalidraw --theme light --scale 3 --max-width 4096 --max-height 4096 --out <name>.png
+excalidraw render <name>.excalidraw --theme light --scale 3 --out <name>.png
 ```
+
+No size flags are needed: since CLI 0.3.0, `render` allows up to 16384px each way by default.
+CLI 0.2.0 capped output at 2048px wide and high and quietly lowered the scale to fit, so a PNG
+that comes out exactly 2048px on one side means the CLI needs updating.
 
 Check what the destination's `width` means: Hugo's figure shortcodes often resize the image to it,
 so pass the PNG's own width there; passing the display width blurs the picture.
